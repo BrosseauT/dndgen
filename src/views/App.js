@@ -4,9 +4,10 @@ import Preface from '../components/Preface';
 import Checkbox from '../components/Checkbox';
 import '../styles/App.css';
 import Repository from '../components/Repository';
-import { getDatabase, ref, child, get } from "firebase/database";
+import { getDatabase, ref, child, get, query, orderByChild } from "firebase/database";
 import { firebaseConfig } from '../firebase';
 import { initializeApp } from 'firebase/app';
+import { createRenderer } from 'react-dom/test-utils';
 
 const App = () => {
   const variable = "cool item";
@@ -27,6 +28,15 @@ const App = () => {
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
  
+  const randy = (max, cur) => {
+    let val = Math.floor(Math.random() * max);
+    if (cur === val) {
+      val = randy(max, val);
+    }
+
+    return val;
+   };
+
      // database end points
      const dbRef = ref(getDatabase());
      const getItemRef = () => {
@@ -34,9 +44,9 @@ const App = () => {
           if (snapshot.exists()) {
             console.log(snapshot.val());
   
-            const rand = Math.floor(Math.random() * 3);
+            const rand = randy(3);
             setTypeRef(snapshot.val()[rand]);
-            setItemRef();        
+            setItemRef();   
           } else {
             console.log("No data available");
           }
@@ -53,8 +63,23 @@ const App = () => {
             res[e] = snapshot.val()[e];
             return res;
           })
-          const rand = Math.floor(Math.random() * result.length);
-           setItem(JSON.stringify(result[rand]));
+          const rand = randy(result.length);
+           setItem((Object.keys(result[rand])));
+          if (preChk) {
+            getPrefix();
+          } else {
+            setPrefix(null);
+          }
+          if (curseChk) {
+            getCurse();
+          } else {
+            setCurse(null);
+          }
+          if (efChk) {
+            getEffect();
+          } else {
+            setEffect(null);
+          }
          } else {
            console.log("no data available dog");
          }
@@ -63,6 +88,77 @@ const App = () => {
        });
      };
 
+     const getPrefix = () => {
+      get(child(dbRef, 'Prefix/')).then((snapshot) => {
+        if (snapshot.exists()) {
+          const snap = snapshot.val();
+          let pRand = randy(snap.length);
+          let allowedPrefix = snap[pRand].TypesAllowed[snap[pRand].TypesAllowed.indexOf(typeRef)];
+          let allowedPrefixName; 
+
+          if (allowedPrefix) {
+            console.log(allowedPrefix);
+            allowedPrefixName = snap[pRand].Title;
+            setPrefix(allowedPrefixName);
+          } else {
+            pRand = randy(snap.length, pRand);
+            allowedPrefix = snap[pRand].TypesAllowed[snap[pRand].TypesAllowed.indexOf(typeRef)];
+
+            console.log(allowedPrefix);
+            allowedPrefixName = snap[pRand].Title;
+            setPrefix(allowedPrefixName);
+          };
+        };
+      });
+     };
+
+     const getCurse = () => {
+      get(child(dbRef, 'Curse/')).then((snapshot) => {
+        if (snapshot.exists()) {
+          const snap = snapshot.val();
+          let cRand = randy(snap.length);
+          let allowedCurse = snap[cRand].TypesAllowed[snap[cRand].TypesAllowed.indexOf(typeRef)];
+          let allowedCurseName;
+
+          if (allowedCurse) {
+            console.log(allowedCurse);
+            allowedCurseName = snap[cRand].Title;
+            setCurse(allowedCurseName);
+          } else {
+            cRand = randy(snap.length, cRand);
+            allowedCurse = snap[cRand].TypesAllowed[snap[cRand].TypesAllowed.indexOf(typeRef)];
+
+            console.log(allowedCurse);
+            allowedCurseName = snap[cRand].Title;
+            setCurse(allowedCurseName);
+          };
+        };
+      });
+     };
+
+     const getEffect = () => {
+      get(child(dbRef, 'Effect/')).then((snapshot) => {
+        if (snapshot.exists()) {
+          const snap = snapshot.val();
+          let efRand = randy(snap.length);
+          let allowedEffect = snap[efRand].TypesAllowed[snap[efRand].TypesAllowed.indexOf(typeRef)];
+          let allowedEffectName;
+
+          if (allowedEffect) {
+            console.log(allowedEffect);
+            allowedEffectName = snap[efRand].Title;
+            setEffect(allowedEffectName);
+          } else {
+            efRand = randy(snap.length, efRand);
+            allowedEffect = snap[efRand].TypesAllowed[snap[efRand].TypesAllowed.indexOf(typeRef)];
+
+            console.log(allowedEffect);
+            allowedEffectName = snap[efRand].Title;
+            setEffect(allowedEffectName);
+          };
+        };
+      });
+     };
 
   const onPressGenerate = () => {
     // const items = listItem;
