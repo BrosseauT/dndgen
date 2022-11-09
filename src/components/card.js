@@ -6,6 +6,7 @@ const Card = (props) => {
         item,
         effect,
         curse,
+        description,
     } = props;
 
     const genPrefix = (prefix) ? prefix : '';
@@ -16,9 +17,15 @@ const Card = (props) => {
     const generatedItem = `${genPrefix} ${genCurse} ${genItem} ${genEffect}`;
 
  return (
-    <div> 
-        {generatedItem}
-    </div>
+    <> 
+        <div>
+            {generatedItem} 
+        </div>
+        <br /> <br />
+        <div>
+            {description}
+        </div>
+    </>
     );
 };
 
