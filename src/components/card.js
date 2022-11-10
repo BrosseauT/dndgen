@@ -21,8 +21,7 @@ const Card = (props) => {
         <div>
             {generatedItem} 
         </div>
-        <br /> <br />
-        <div>
+        <div className='desc'>
             {description}
         </div>
     </>
